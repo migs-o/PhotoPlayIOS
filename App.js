@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ActionSheetIOS,
   Animated,
+  ImageBackground,
 } from 'react-native';
 import PhotoPicker from './components/PhotoPicker';
 import PuzzleBoard from './components/PuzzleBoard';
@@ -116,36 +117,42 @@ export default function App() {
     );
   }
 
-  if (!gameStarted) {
-    // Step 2: preview photo with options
+  if (photo && !gameStarted) {
     return (
-      <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#000' }}>
-        <View style={styles.previewContainer}>
-          <View style={styles.imageContainer}>
-            <Image 
-              source={{ uri: photo }} 
-              style={styles.image} 
-              resizeMode="contain" 
-            />
-          </View>
-          <View style={styles.buttons}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                setPhoto(null);
-                setGridSize(null);
-                setGameStarted(false);
-              }}
-            >
-              <Text style={styles.buttonText}>Pick Another Photo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={handleChangeGridSize}>
-              <Text style={styles.buttonText}>Change Grid Size</Text>
-            </TouchableOpacity>
+      <ImageBackground 
+        source={require('./assets/choosegrid.png')} 
+        style={styles.previewBackground}
+        resizeMode="cover"
+      >
+        <View style={styles.overlay}>
+          <View style={styles.previewContainer}>
+            <View style={styles.previewImageContainer}>
+              <Image
+                source={{ uri: photo }}
+                style={styles.previewImage}
+                resizeMode="contain"
+              />
+            </View>
+            <View style={styles.previewButtons}>
+              <TouchableOpacity
+                style={styles.previewButton}
+                onPress={() => {
+                  setPhoto(null);
+                  setGameStarted(false);
+                }}
+              >
+                <Text style={styles.buttonText}>Choose Another</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.previewButton, styles.startButton]}
+                onPress={() => setGameStarted(true)}
+              >
+                <Text style={[styles.buttonText, styles.startButtonText]}>Start Game</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </GestureHandlerRootView>
+      </ImageBackground>
     );
   }
 
@@ -175,10 +182,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
-  previewContainer: {
+  previewBackground: {
     flex: 1,
-    backgroundColor: '#000',
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
     padding: 20,
+  },
+  previewContainer: {
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    borderRadius: 15,
+    padding: 20,
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  previewImageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+    maxHeight: '80%',
+    borderRadius: 10,
+  },
+  previewButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
   },
   imageContainer: {
     flex: 1,
