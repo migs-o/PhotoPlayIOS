@@ -20,15 +20,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory
-
+    
+    // Create window
     window = UIWindow(frame: UIScreen.main.bounds)
-
-    factory.startReactNative(
-      withModuleName: "PhotoPlayIOS",
-      in: window,
-      launchOptions: launchOptions
-    )
-
+    
+    // Show launch screen first
+    let launchScreen = UIStoryboard(name: "LaunchScreen", bundle: nil)
+    let launchVC = launchScreen.instantiateInitialViewController()
+    window?.rootViewController = launchVC
+    window?.makeKeyAndVisible()
+    
+    // Start React Native after 2 seconds
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+      factory.startReactNative(
+        withModuleName: "PhotoPlayIOS",
+        in: self.window,
+        launchOptions: launchOptions
+      )
+    }
+    
     return true
   }
 }

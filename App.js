@@ -1,5 +1,6 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import SplashScreen from 'react-native-splash-screen';
 import {
   View,
   StyleSheet,
@@ -13,6 +14,27 @@ import PhotoPicker from './components/PhotoPicker';
 import PuzzleBoard from './components/PuzzleBoard';
 
 export default function App() {
+  useEffect(() => {
+    // First, prevent the splash screen from auto-hiding
+    SplashScreen.hide();
+    
+    // Then show it again and keep it visible for 2 seconds
+    const showSplash = async () => {
+      await SplashScreen.show();
+      
+      // Hide after 2 seconds
+      setTimeout(() => {
+        SplashScreen.hide();
+      }, 2000);
+    };
+    
+    showSplash();
+    
+    // Cleanup
+    return () => {
+      SplashScreen.hide();
+    };
+  }, []);
   const [photo, setPhoto] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [gridSize, setGridSize] = useState(null);
