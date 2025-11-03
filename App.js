@@ -47,21 +47,6 @@ export default function App() {
     setPhoto(uri);
     setGridSize(null);
     setGameStarted(false);
-
-    // Show grid size picker
-    ActionSheetIOS.showActionSheetWithOptions(
-      {
-        options: ['Cancel', '3 × 3', '4 × 4', '5 × 5'],
-        cancelButtonIndex: 0,
-      },
-      (buttonIndex) => {
-        if (buttonIndex === 1) setGridSize(3);
-        else if (buttonIndex === 2) setGridSize(4);
-        else if (buttonIndex === 3) setGridSize(5);
-
-        if (buttonIndex !== 0) setGameStarted(true);
-      }
-    );
   };
 
   const handleChangeGridSize = () => {
@@ -132,23 +117,36 @@ export default function App() {
                 style={styles.previewImage}
                 resizeMode="contain"
               />
-            </View>
-            <View style={styles.previewButtons}>
-              <TouchableOpacity
-                style={styles.previewButton}
-                onPress={() => {
-                  setPhoto(null);
-                  setGameStarted(false);
-                }}
-              >
-                <Text style={styles.buttonText}>Choose Another</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.previewButton, styles.startButton]}
-                onPress={() => setGameStarted(true)}
-              >
-                <Text style={[styles.buttonText, styles.startButtonText]}>Start Game</Text>
-              </TouchableOpacity>
+              <Text style={styles.chooseDifficultyText}>Choose Difficulty</Text>
+              <View style={styles.difficultyButtons}>
+                <TouchableOpacity
+                  style={[styles.difficultyButton, styles.easyButton]}
+                  onPress={() => {
+                    setGridSize(3);
+                    setGameStarted(true);
+                  }}
+                >
+                  <Text style={styles.difficultyButtonText}>Easy (3×3)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.difficultyButton, styles.mediumButton]}
+                  onPress={() => {
+                    setGridSize(4);
+                    setGameStarted(true);
+                  }}
+                >
+                  <Text style={styles.difficultyButtonText}>Medium (4×4)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.difficultyButton, styles.hardButton]}
+                  onPress={() => {
+                    setGridSize(5);
+                    setGameStarted(true);
+                  }}
+                >
+                  <Text style={styles.difficultyButtonText}>Hard (5×5)</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
@@ -189,7 +187,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     padding: 20,
   },
@@ -202,15 +200,51 @@ const styles = StyleSheet.create({
   },
   previewImageContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    width: '100%',
+    paddingTop: 40, // Add some padding at the top
+  },
+  chooseDifficultyText: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 20,
     marginBottom: 20,
+    textAlign: 'center',
+  },
+  difficultyButtons: {
+    width: '100%',
+    paddingHorizontal: 20,
+    marginTop: 20, // Add margin to push buttons up
+  },
+  difficultyButton: {
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    alignItems: 'center',
+    width: '100%',
+  },
+  easyButton: {
+    backgroundColor: '#4CAF50',
+  },
+  mediumButton: {
+    backgroundColor: '#FFC107',
+  },
+  hardButton: {
+    backgroundColor: '#F44336',
+  },
+  difficultyButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
   },
   previewImage: {
     width: '100%',
-    height: '100%',
-    maxHeight: '80%',
+    height: '50%', // Reduce image height
+    maxHeight: 300, // Add max height
     borderRadius: 10,
+    marginBottom: 20, // Add some space below the image
   },
   previewButtons: {
     flexDirection: 'row',
