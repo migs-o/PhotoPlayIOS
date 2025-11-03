@@ -1,5 +1,5 @@
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
-import { View, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Alert, ImageBackground, Image } from 'react-native';
 
 export default function PhotoPicker({ setPhoto }) {
   const pickFromGallery = () => {
@@ -35,37 +35,66 @@ export default function PhotoPicker({ setPhoto }) {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={pickFromGallery}>
-        <Text style={styles.buttonText}>Choose from Gallery</Text>
-      </TouchableOpacity>
+    <ImageBackground 
+      source={require('../assets/select.png')} 
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={[styles.button, styles.galleryButton]} 
+            onPress={pickFromGallery}
+          >
+            <Text style={styles.buttonText}>Choose from Gallery</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={takePhoto}>
-        <Text style={styles.buttonText}>Take Photo</Text>
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity 
+            style={[styles.button, styles.cameraButton]} 
+            onPress={takePhoto}
+          >
+            <Text style={styles.buttonText}>Take Photo</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000',
-    padding: 20,
-    gap: 20, // spacing between buttons
+  },
+  buttonContainer: {
+    width: '80%',
+    maxWidth: 300,
   },
   button: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    padding: 20,
-    borderRadius: 10,
-    marginVertical: 12,
+    padding: 18,
+    borderRadius: 30,
+    marginBottom: 20,
     width: '100%',
-    maxWidth: 300,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  galleryButton: {
+    backgroundColor: '#FF6B6B',
+  },
+  cameraButton: {
+    backgroundColor: '#4ECDC4',
   },
   buttonText: {
     color: 'white',
