@@ -14,6 +14,24 @@ import {
 import PhotoPicker from './components/PhotoPicker';
 import PuzzleBoard from './components/PuzzleBoard';
 
+function TitleScreen({ onPlay }) {
+  return (
+    <View style={styles.titleContainer}>
+      <Image 
+        source={require('./assets/title.png')} 
+        style={styles.titleImage}
+        resizeMode="contain"
+      />
+      <TouchableOpacity 
+        style={styles.playButton}
+        onPress={onPlay}
+      >
+        <Text style={styles.playButtonText}>PLAY</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 export default function App() {
   useEffect(() => {
     // First, prevent the splash screen from auto-hiding
@@ -36,11 +54,16 @@ export default function App() {
       SplashScreen.hide();
     };
   }, []);
+  const [showTitle, setShowTitle] = useState(true);
   const [photo, setPhoto] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [gridSize, setGridSize] = useState(null);
   const [shuffleKey, setShuffleKey] = useState(0);
-  const fadeAnim = useRef(new Animated.Value(1)).current; // 👈 fade animation control
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePlay = () => {
+    setShowTitle(false);
+  };
 
   // Called when a photo is picked or taken
   const handlePhotoPicked = (uri) => {
@@ -92,6 +115,10 @@ export default function App() {
   };
 
   if (!photo) {
+    if (showTitle) {
+      return <TitleScreen onPlay={handlePlay} />;
+    }
+
     // Step 1: pick photo (gallery or camera)
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -176,6 +203,30 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  titleContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+  },
+  playButton: {
+    position: 'absolute',
+    bottom: 100,
+    backgroundColor: '#FFD700',
+    paddingHorizontal: 50,
+    paddingVertical: 15,
+    borderRadius: 30,
+  },
+  playButtonText: {
+    color: '#000',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: '#000',
