@@ -49,10 +49,8 @@ export default function PuzzleBoard({ photo, gridSize = 3, onPuzzleComplete }) {
 
   // Timer
   useEffect(() => {
-    if (tiles.length === 0) return;
+    if (tiles.length === 0 || puzzleCompleted) return;
 
-    setSeconds(0);
-    secondsRef.current = 0;
     clearInterval(timerRef.current);
 
     timerRef.current = setInterval(() => {
@@ -65,7 +63,7 @@ export default function PuzzleBoard({ photo, gridSize = 3, onPuzzleComplete }) {
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, [tiles]);
+  }, [tiles.length, puzzleCompleted]);
 
   // Initialize tiles
   useEffect(() => {
@@ -136,28 +134,42 @@ export default function PuzzleBoard({ photo, gridSize = 3, onPuzzleComplete }) {
   };
 
   const checkCompletion = (updatedTiles) => {
+    if (puzzleCompleted) return; // Already completed
+    
     const allCorrect = updatedTiles.every(
       (t) => t.row === t.correctRow && t.col === t.correctCol
     );
-    if (allCorrect && !puzzleCompleted) {
-      clearInterval(timerRef.current);
-      setPuzzleCompleted(true);
-
+    if (allCorrect) {
+      // Capture the current values BEFORE any state updates
+      const finalMoves = moveCountRef.current;
+      const finalSeconds = secondsRef.current;
       const finalScore = Math.max(
-        BASE_POINTS - MOVE_PENALTY * moveCountRef.current - TIME_PENALTY * secondsRef.current,
+        BASE_POINTS - MOVE_PENALTY * finalMoves - TIME_PENALTY * finalSeconds,
         0
       );
+      
+      // Stop the timer
+      clearInterval(timerRef.current);
+      
+      // Update state
+      setPuzzleCompleted(true);
+      setScore(finalScore);
 
       setTimeout(() => {
         Alert.alert(
           '🎉 Puzzle solved!',
-          `Great job!\nMoves: ${moveCountRef.current}\nTime: ${secondsRef.current}s\nScore: ${finalScore}`
+          `Great job!\nMoves: ${finalMoves}\nTime: ${finalSeconds}s\nScore: ${finalScore}`
         );
       }, 300);
     }
   };
 
   const swapTiles = (tileId1, tileId2) => {
+    // Increment move count BEFORE the swap
+    const newMoveCount = moveCountRef.current + 1;
+    moveCountRef.current = newMoveCount;
+    setMoveCount(newMoveCount);
+    
     setTiles(prevTiles => {
       const tile1Index = prevTiles.findIndex(t => t.id === tileId1);
       const tile2Index = prevTiles.findIndex(t => t.id === tileId2);
@@ -176,7 +188,8 @@ export default function PuzzleBoard({ photo, gridSize = 3, onPuzzleComplete }) {
       newTiles[tile2Index] = { ...tile2, row: tempRow, col: tempCol };
 
       playSnapSound();
-      incrementMove();
+      
+      // Check completion AFTER move count is updated
       checkCompletion(newTiles);
       
       return newTiles;
